@@ -49,7 +49,7 @@ export function startServer({port}) {
     log("New client connected")
   })
 
-  wss._pingInterval = setInterval(this.notifyPing.bind(this), 10*1000);
+  server._pingInterval = setInterval(server.notifyPing.bind(this), 10 * 1000);
   
   return server
 }
