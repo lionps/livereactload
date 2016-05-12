@@ -12,6 +12,9 @@ module.exports = function client(opts, start = startClient) {
     },
     bundle_error(msg) {
       error(msg.data.error)
+    },
+    ping(msg) {
+      return {type:"pong"}
     }
   })
 }

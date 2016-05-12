@@ -19,6 +19,12 @@ export default function startClient(scope$$, onMsg) {
         ws.send(JSON.stringify(res))
       }
     }
+    
+    ws.onclose = m => {
+        setTimeout(function() {
+            startClient(scope$$, onMsg)
+        })
+    }
 
     scope$$.ws = ws
   }
