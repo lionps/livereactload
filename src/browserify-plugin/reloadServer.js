@@ -14,6 +14,13 @@ export function startServer({port}) {
   log("Reload server up and listening in port " + port + "...")
 
   const server = {
+    notifyPing() {
+      wss.clients.forEach(client => {
+        client.send(JSON.stringify({
+          type: "ping"
+        }), logError)
+      })
+    },
     notifyReload(metadata) {
       if (wss.clients.length) {
         log("Notify clients about bundle change...")
@@ -42,5 +49,7 @@ export function startServer({port}) {
     log("New client connected")
   })
 
+  wss._pingInterval = setInterval(this.notify.bind(this), 10*1000);
+  
   return server
 }
