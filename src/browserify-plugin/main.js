@@ -18,8 +18,6 @@ module.exports = function LiveReactloadPlugin(b, opts = {}) {
   // server is alive as long as watchify is running
   const server = opts.server !== false ? startServer({port: Number(port)}) : null
   const requireOverride = readFileSync(resolve(__dirname, "../requireOverride.js")).toString()
-
-  b.___reloadServe = server
   
   const clientOpts = {
     port: Number(port),
@@ -34,6 +32,18 @@ module.exports = function LiveReactloadPlugin(b, opts = {}) {
     // pipeline so when next bundling occurs, this cache
     // object is thrown away
     const modules = {}
+    
+    b.on("source", function(id, source) {
+        Object.assign(modules[id], {
+            source: source,
+            hash: makeHash(source)
+        })
+    })
+    b.on("reload", function() {
+        if (server) {
+          server.notifyReload({modules, entryId})
+        }        
+    })
 
     const bundleInitJs =
       `var require = ${requireOverride};
