@@ -19,6 +19,8 @@ module.exports = function LiveReactloadPlugin(b, opts = {}) {
   const server = opts.server !== false ? startServer({port: Number(port)}) : null
   const requireOverride = readFileSync(resolve(__dirname, "../requireOverride.js")).toString()
 
+  b.___reloadServe = server
+  
   const clientOpts = {
     port: Number(port),
     host: host
