@@ -38,6 +38,9 @@ module.exports = function LiveReactloadPlugin(b, opts = {}) {
             source: source,
             hash: makeHash(source)
         })
+        if (server) {
+          server.notifyModule(modules[id]);
+        }
     })
     b.on("reload", function() {
         if (server) {

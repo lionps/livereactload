@@ -21,6 +21,17 @@ export function startServer({port}) {
         }), logError)
       })
     },
+    notifyModule(module) {
+      if (wss.clients.length) {
+        log("Notify clients about a module change...")
+      }
+      wss.clients.forEach(client => {
+        client.send(JSON.stringify({
+          type: "module",
+          data: module
+        }), logError)
+      })
+    },
     notifyReload(metadata) {
       if (wss.clients.length) {
         log("Notify clients about bundle change...")

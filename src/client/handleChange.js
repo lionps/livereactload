@@ -2,7 +2,7 @@ import {diff, patchMetaData} from "./reloadUtils"
 import {info, warn} from "./console"
 import {isPlainObj, values, find} from "../common"
 
-export default function handleChanges(scope$$, {modules: newModules, entryId: newEntryId}) {
+export function handleChanges(scope$$, {modules: newModules, entryId: newEntryId}) {
   const {modules, require: __require} = scope$$
 
   const modulesToReload = diff(modules, newModules, newEntryId)
@@ -32,28 +32,7 @@ export default function handleChanges(scope$$, {modules: newModules, entryId: ne
   try {
     patch.forEach(({id, file, parents, isNew}) => {
       if (propagationGuards[id] > 0) {
-        if (isNew) {
-          console.log(" > Add new module  ::", file)
-        } else {
-          console.log(" > Patch module    ::", file)
-        }
-
-        let reloadedExports, accepted = false
-        try {
-          // ATTENTION: must use scope object because it has been mutated during "pathMetaData"
-          delete scope$$.exports[id]
-          scope$$.modules[id].__inited = false
-          reloadedExports = __require.__byId(id, true)
-        } catch (e) {
-          if (e.accepted) {
-            console.log(" > Manually accepted")
-            accepted = true
-          } else {
-            console.error(e)
-            warn("Abort patching")
-            throw {aborted: true}
-          }
-        }
+        patchModule(scope$$, {id, file, parents, isNew})
 
         if (!isNew && (accepted || isStoppable(reloadedExports || {}))) {
           preventPropagation(parents)
@@ -79,6 +58,33 @@ export default function handleChanges(scope$$, {modules: newModules, entryId: ne
     })
   }
 }
+
+export function patchModule(scope$$, {id, file, parents, isNew})
+{
+  if (isNew) {
+    console.log(" > Add new module  ::", file)
+  } else {
+    console.log(" > Patch module    ::", file)
+  }
+
+  let reloadedExports, accepted = false
+  try {
+    // ATTENTION: must use scope object because it has been mutated during "pathMetaData"
+    delete scope$$.exports[id]
+    scope$$.modules[id].__inited = false
+    reloadedExports = __require.__byId(id, true)
+  } catch (e) {
+    if (e.accepted) {
+      console.log(" > Manually accepted")
+      accepted = true
+    } else {
+      console.error(e)
+      warn("Abort patching")
+      throw {aborted: true}
+    }
+  }
+}
+
 
 function isStoppable(exports) {
   if (isProxied(exports)) {
