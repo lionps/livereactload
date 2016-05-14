@@ -61,6 +61,8 @@ export function handleChanges(scope$$, {modules: newModules, entryId: newEntryId
 
 export function patchModule(scope$$, {id, file, parents, isNew})
 {
+  var __require = scope$$.require;
+    
   if (isNew) {
     console.log(" > Add new module  ::", file)
   } else {
