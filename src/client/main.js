@@ -12,8 +12,16 @@ module.exports = function client(opts, start = startClient) {
     },
     module(msg) {
       info("Module change")
+      let module = msg.data;
       Object.assign(scope$$.modules[msg.data.id], msg.data);
       patchModule(scope$$, msg.data)
+      if (module.id.indexOf(".mxml.") > 0) {
+        let pairModuleId = module.id.replace(".mxml", "");
+        let pairModule = scope$$.modules[pairModuleId];
+        if (pairModule) {
+          patchModule(scope$$, pairModule);
+        }
+      }
     },
     bundle_error(msg) {
       error(msg.data.error)
