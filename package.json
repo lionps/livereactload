@@ -35,6 +35,7 @@
     "chokidar": "1.4.2",
     "shelljs": "0.5.3",
     "tape": "4.4.0",
+    "through2": "^2.0.0",
     "zombie": "4.2.1"
   }
 }
