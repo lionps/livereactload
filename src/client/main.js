@@ -1,5 +1,5 @@
 import startClient from "./startClient"
-import {handleChange, patchModule} from "./handleChange"
+import {handleChanges, patchModule} from "./handleChange"
 import {info, error} from "./console"
 
 module.exports = function client(opts, start = startClient) {

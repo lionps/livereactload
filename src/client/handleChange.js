@@ -2,6 +2,8 @@ import {diff, patchMetaData} from "./reloadUtils"
 import {info, warn} from "./console"
 import {isPlainObj, values, find} from "../common"
 
+let reloadedExports;
+
 export function handleChanges(scope$$, {modules: newModules, entryId: newEntryId}) {
   const {modules, require: __require} = scope$$
 
@@ -69,7 +71,7 @@ export function patchModule(scope$$, {id, file, parents, isNew})
     console.log(" > Patch module    ::", file)
   }
 
-  let reloadedExports, accepted = false
+  let accepted = false
   try {
     // ATTENTION: must use scope object because it has been mutated during "pathMetaData"
     delete scope$$.exports[id]
